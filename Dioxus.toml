@@ -1,0 +1,7 @@
+[application]
+name = "lumina"
+default_platform = "desktop"
+
+[bundle]
+identifier = "dev.lumina.app"
+icon = ["assets/icon.png"]

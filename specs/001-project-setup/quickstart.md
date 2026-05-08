@@ -32,7 +32,22 @@ cargo install dioxus-cli
 dx --version      # must be 0.7.x
 ```
 
-### 3. Linux System Dependencies
+### 3. Windows Dependencies
+
+> **Skip this section on Linux and macOS**
+
+Building Rust desktop apps on Windows requires the MSVC C++ toolchain and Windows SDK.
+
+```powershell
+# Install Visual Studio Build Tools with C++ workload
+winget install Microsoft.VisualStudio.2022.BuildTools --accept-source-agreements --accept-package-agreements --override "--quiet --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+
+# Install Windows 10 SDK (required for kernel32.lib)
+Start-Process "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools`" --add Microsoft.VisualStudio.Component.Windows10SDK.20348 --quiet --norestart" -Wait -NoNewWindow
+```
+
+
+### 4. Linux System Dependencies
 
 > **Skip this section on Windows and macOS** — system WebView is bundled.
 
@@ -108,6 +123,8 @@ After running `dx serve`, confirm:
 |---|---|
 | `rustc` version too old | Run `rustup update stable` |
 | `dx: command not found` | Run `cargo install dioxus-cli`, ensure `~/.cargo/bin` is in `$PATH` |
+| Windows: `link.exe not found` | Install Visual Studio Build Tools C++ workload |
+| Windows: `LNK1181: cannot open kernel32.lib` | Install the Windows 10 SDK via VS Installer |
 | Linux linker error: `cannot find -lwebkit2gtk-4.1` | Install the `-dev` packages listed above for your distro |
 | Linux: app window is black / blank | The app sets `WEBKIT_DISABLE_COMPOSITING_MODE=1` automatically in debug builds |
 | Port conflict on `dx serve` | Another `dx serve` instance is running — kill it or use a different terminal |

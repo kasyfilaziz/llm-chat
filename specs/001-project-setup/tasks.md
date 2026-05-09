@@ -27,10 +27,10 @@ description: "Task list for Project Initialization & Environment Setup"
 
 **Purpose**: Create all project configuration and asset files. These are independent of each other and can be created in any order (T002–T004 in parallel after T001).
 
-- [ ] T001 Create `Cargo.toml` at repository root with package metadata (`name = "lumina"`, `version = "0.1.0"`, `edition = "2021"`) and dependencies: `dioxus = { version = "0.7", features = ["desktop"] }` and `rusqlite = { version = "0.31", features = ["bundled"] }`
-- [ ] T002 [P] Create `Dioxus.toml` at repository root with `[application]` section (`name = "lumina"`, `default_platform = "desktop"`) and `[bundle]` section (`identifier = "dev.lumina.app"`, `icon = ["assets/icon.png"]`)
-- [ ] T003 [P] Create `assets/` directory and add `assets/icon.png` as a minimal placeholder PNG (any valid 1x1 PNG or simple icon — exact design is not required at scaffold stage)
-- [ ] T004 [P] Create `assets/main.css` as an empty stub file (Tailwind CSS entry point; the `dx` CLI manages this file's content automatically during `dx serve` / `dx build`)
+- [X] T001 Create `Cargo.toml` at repository root with package metadata (`name = "lumina"`, `version = "0.1.0"`, `edition = "2021"`) and dependencies: `dioxus = { version = "0.7", features = ["desktop"] }` and `rusqlite = { version = "0.31", features = ["bundled"] }`
+- [X] T002 [P] Create `Dioxus.toml` at repository root with `[application]` section (`name = "lumina"`, `default_platform = "desktop"`) and `[bundle]` section (`identifier = "dev.lumina.app"`, `icon = ["assets/icon.png"]`)
+- [X] T003 [P] Create `assets/` directory and add `assets/icon.png` as a minimal placeholder PNG (any valid 1x1 PNG or simple icon — exact design is not required at scaffold stage)
+- [X] T004 [P] Create `assets/main.css` as an empty stub file (Tailwind CSS entry point; the `dx` CLI manages this file's content automatically during `dx serve` / `dx build`)
 
 **Checkpoint**: All configuration and asset files exist — source code phase can begin.
 
@@ -42,9 +42,9 @@ description: "Task list for Project Initialization & Environment Setup"
 
 **⚠️ CRITICAL**: No user story validation can begin until this phase is complete.
 
-- [ ] T005 Create `src/main.rs` with the `main()` entry point: include the Linux WebView compositing workaround (`#[cfg(all(target_os = "linux", debug_assertions))]` block setting `WEBKIT_DISABLE_COMPOSITING_MODE=1`) followed by the `dioxus::launch(App)` call, and `use dioxus::prelude::*;` import
-- [ ] T006 Add the `App` root component to `src/main.rs`: annotate with `#[component]`, return `Element`, and render a Tailwind-styled placeholder UI — a dark full-screen div (`bg-gray-950`, `flex`, `items-center`, `justify-center`, `min-h-screen`) containing an `h1` with `"Lumina"` and a `p` with `"v0.1.0 — Project initialized"` in muted text
-- [ ] T007 Run `cargo check --all-targets` from repository root and confirm zero compilation errors; fix any errors before proceeding
+- [X] T005 Create `src/main.rs` with the `main()` entry point: include the Linux WebView compositing workaround (`#[cfg(all(target_os = "linux", debug_assertions))]` block setting `WEBKIT_DISABLE_COMPOSITING_MODE=1`) followed by the `dioxus::launch(App)` call, and `use dioxus::prelude::*;` import
+- [X] T006 Add the `App` root component to `src/main.rs`: annotate with `#[component]`, return `Element`, and render a Tailwind-styled placeholder UI — a dark full-screen div (`bg-gray-950`, `flex`, `items-center`, `justify-center`, `min-h-screen`) containing an `h1` with `"Lumina"` and a `p` with `"v0.1.0 — Project initialized"` in muted text
+- [X] T007 Run `cargo check --all-targets` from repository root and confirm zero compilation errors; fix any errors before proceeding
 
 **Checkpoint**: Foundation ready — both user stories can now be validated independently.
 
@@ -58,9 +58,9 @@ description: "Task list for Project Initialization & Environment Setup"
 
 ### Implementation for User Story 1
 
-- [ ] T008 [US1] Run `dx build` (or `dx serve` then immediately close) from repository root and confirm the project builds without compilation errors, satisfying SC-001 and FR-004
-- [ ] T009 [US1] Launch the compiled desktop application and verify a native window opens on the current platform displaying at minimum: the text `"Lumina"` as a heading and `"v0.1.0"` visible — satisfying SC-002 and FR-005
-- [ ] T010 [US1] Review `specs/001-project-setup/quickstart.md` against the actual steps performed in T001–T009; update any step that is missing, inaccurate, or requires an undocumented action — satisfying FR-006 and SC-003
+- [X] T008 [US1] Run `dx build` (or `dx serve` then immediately close) from repository root and confirm the project builds without compilation errors, satisfying SC-001 and FR-004
+- [X] T009 [US1] Launch the compiled desktop application and verify a native window opens on the current platform displaying at minimum: the text `"Lumina"` as a heading and `"v0.1.0"` visible — satisfying SC-002 and FR-005
+- [X] T010 [US1] Review `specs/001-project-setup/quickstart.md` against the actual steps performed in T001–T009; update any step that is missing, inaccurate, or requires an undocumented action — satisfying FR-006 and SC-003
 
 **Checkpoint**: User Story 1 complete — a developer can independently clone the repo and reach a running desktop window using only `quickstart.md`.
 
@@ -74,9 +74,9 @@ description: "Task list for Project Initialization & Environment Setup"
 
 ### Implementation for User Story 2
 
-- [ ] T011 [US2] Run `dx serve` from repository root and confirm: (a) the development server starts without errors, (b) a native desktop window opens automatically
-- [ ] T012 [US2] While `dx serve` is running, edit a visible UI string in `src/main.rs` (e.g., change `"v0.1.0 — Project initialized"` to `"Hot-reload works!"`), save the file, and confirm the running window updates to reflect the change without requiring a manual restart — satisfying US2 acceptance scenarios
-- [ ] T013 [US2] Revert the test change in `src/main.rs` back to `"v0.1.0 — Project initialized"`, save, and confirm the window returns to the original state
+- [X] T011 [US2] Run `dx serve` from repository root and confirm: (a) the development server starts without errors, (b) a native desktop window opens automatically
+- [X] T012 [US2] While `dx serve` is running, edit a visible UI string in `src/main.rs` (e.g., change `"v0.1.0 — Project initialized"` to `"Hot-reload works!"`), save the file, and confirm the running window updates to reflect the change without requiring a manual restart — satisfying US2 acceptance scenarios
+- [X] T013 [US2] Revert the test change in `src/main.rs` back to `"v0.1.0 — Project initialized"`, save, and confirm the window returns to the original state
 
 **Checkpoint**: User Story 2 complete — hot-reload development workflow is verified and functional.
 
@@ -86,9 +86,9 @@ description: "Task list for Project Initialization & Environment Setup"
 
 **Purpose**: Repository hygiene, documentation, and version control.
 
-- [ ] T014 [P] Update `README.md` at repository root with: project name (Lumina), one-sentence description, tech stack summary (Rust, Dioxus 0.7, Tailwind CSS v4), and a link to `specs/001-project-setup/quickstart.md` for setup instructions
-- [ ] T015 [P] Verify `.gitignore` at repository root includes entries for: `target/`, `dist/`, `*.pdb`, and `*.rs.bk` — add any missing entries
-- [ ] T016 Commit all scaffold files to version control with a descriptive commit message (e.g., `feat: initialize Lumina project scaffold (Dioxus 0.7, Tailwind v4, SQLite stub)`) — satisfying SC-004
+- [X] T014 [P] Update `README.md` at repository root with: project name (Lumina), one-sentence description, tech stack summary (Rust, Dioxus 0.7, Tailwind CSS v4), and a link to `specs/001-project-setup/quickstart.md` for setup instructions
+- [X] T015 [P] Verify `.gitignore` at repository root includes entries for: `target/`, `dist/`, `*.pdb`, and `*.rs.bk` — add any missing entries
+- [X] T016 Commit all scaffold files to version control with a descriptive commit message (e.g., `feat: initialize Lumina project scaffold (Dioxus 0.7, Tailwind v4, SQLite stub)`) — satisfying SC-004
 
 ---
 

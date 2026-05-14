@@ -48,3 +48,11 @@ pub async fn load_messages(conn: Arc<Mutex<Connection>>) -> Result<Vec<Message>,
         Ok(messages)
     }).await.map_err(|e| e.to_string())?
 }
+
+pub async fn clear_messages(conn: Arc<Mutex<Connection>>) -> Result<(), String> {
+    tokio::task::spawn_blocking(move || {
+        let conn = conn.lock().map_err(|e| e.to_string())?;
+        conn.execute("DELETE FROM messages", []).map_err(|e| e.to_string())?;
+        Ok(())
+    }).await.map_err(|e| e.to_string())?
+}

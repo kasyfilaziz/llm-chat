@@ -1,6 +1,7 @@
 [application]
 name = "lumina"
 default_platform = "desktop"
+tailwind_input = "tailwind.css"
 
 [bundle]
 identifier = "dev.lumina.app"

@@ -1,5 +1,6 @@
 use futures_util::StreamExt;
 use reqwest_eventsource::{Event, EventSource};
+use tracing::info;
 use crate::domains::llm::client::{LlmClient, ProviderType};
 use crate::domains::llm::models::{ChatResponseChunk, OllamaChatResponse, ChatRequest};
 
@@ -20,6 +21,9 @@ pub async fn process_stream(
                         let chunk: ChatResponseChunk = serde_json::from_str(&msg.data)
                             .map_err(|e| format!("Failed to parse OpenAI chunk: {}", e))?;
                         let content = chunk.choices[0].delta.content.clone().unwrap_or_default();
+                        if !content.is_empty() {
+                            info!("Received token: {}", content);
+                        }
                         Ok(content)
                     }
                     Ok(_) => Ok("".to_string()),
@@ -29,6 +33,13 @@ pub async fn process_stream(
         }
         ProviderType::Ollama => {
             let response = client.stream_chat(request).await.map_err(|e| format!("Request error: {}", e))?;
+            
+            if !response.status().is_success() {
+                let status = response.status();
+                let body = response.text().await.unwrap_or_default();
+                return Err(format!("Ollama API error ({}): {}", status, body));
+            }
+
             let stream = response.bytes_stream();
             Ok(stream.map(|item| {
                 match item {
@@ -37,7 +48,11 @@ pub async fn process_stream(
                         let mut content = String::new();
                         for part in line.lines() {
                             if let Ok(res) = serde_json::from_str::<OllamaChatResponse>(part) {
-                                content.push_str(&res.message.content);
+                                let content_part = &res.message.content;
+                                if !content_part.is_empty() {
+                                    info!("Received token: {}", content_part);
+                                }
+                                content.push_str(content_part);
                             }
                         }
                         Ok(content)

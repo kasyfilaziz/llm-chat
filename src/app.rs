@@ -24,6 +24,7 @@ pub fn App() -> Element {
     provide_context(conn);
 
     rsx! {
+        document::Link { rel: "stylesheet", href: asset!("/assets/main.css") }
         Router::<Route> {}
     }
 }

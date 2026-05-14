@@ -80,18 +80,19 @@ All development on Lumina adheres to our Project Constitution @specify/memory/co
 - **Android SDK:** Required for mobile builds.
 
 ### Installation & Run
-Detailed setup instructions can be found in the [Quickstart Guide](specs/001-project-setup/quickstart.md).
 
-```bash
-# To run the desktop version
-dx serve
-```
+1. **Configure Environment**: Create a `.env` file based on [quickstart.md](specs/002-tracer-bullet/quickstart.md).
+2. **Launch Dev Server**:
+   ```bash
+   # Run the desktop version with hot-reloading
+   dx serve
+   ```
 
 ## 🗺️ Roadmap
 
 We follow a **"Tracer Bullet" (Vertical Slice)** methodology to ensure the Dioxus UI, database, and asynchronous LLM network calls are constantly integrated, prioritizing a lightweight footprint.
 
-- [ ] **Phase 1: The Core Loop (Tracer Bullet)** - End-to-end basic chat input, SQLite persistence, and mocked/basic LLM response stream.
+- [X] **Phase 1: The Core Loop (Tracer Bullet)** - End-to-end basic chat input, SQLite persistence, and mocked/basic LLM response stream.
 - [ ] **Phase 2: Domain Expansion** - Conversation history (sidebar), Settings (API keys), and Model Context Protocol (MCP) foundation.
 - [ ] **Phase 3: UX & Performance Polish** - Markdown rendering, 60fps streaming tokens, and memory optimization profiling to guarantee sub-100MB RAM usage.
 - [ ] **Phase 4: Distribution** - Automated CI/CD pipelines for cross-platform installers (Windows, Linux, macOS).

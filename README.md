@@ -93,7 +93,7 @@ All development on Lumina adheres to our Project Constitution @specify/memory/co
 We follow a **"Tracer Bullet" (Vertical Slice)** methodology to ensure the Dioxus UI, database, and asynchronous LLM network calls are constantly integrated, prioritizing a lightweight footprint.
 
 - [X] **Phase 1: The Core Loop (Tracer Bullet)** - End-to-end basic chat input, SQLite persistence, and mocked/basic LLM response stream.
-- [ ] **Phase 2: Domain Expansion** - Conversation history (sidebar), Settings (API keys), and Model Context Protocol (MCP) foundation.
+- [X] **Phase 2: Domain Expansion** - Conversation history (sidebar), Settings (API keys), and Model Context Protocol (MCP) foundation.
 - [ ] **Phase 3: UX & Performance Polish** - Markdown rendering, 60fps streaming tokens, and memory optimization profiling to guarantee sub-100MB RAM usage.
 - [ ] **Phase 4: Distribution** - Automated CI/CD pipelines for cross-platform installers (Windows, Linux, macOS).
 

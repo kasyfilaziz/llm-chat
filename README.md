@@ -96,32 +96,69 @@ The diagram below illustrates how Lumina handles a user message using an asynchr
 ```mermaid
 sequenceDiagram
     actor User
-    participant UI as ChatScreen (UI)
-    participant Store as ConversationStore (Signal)
-    participant Actor as ChatService (Coroutine)
-    participant DB as SQLite (Local)
-    participant LLM as LLM Provider (API/Local)
+    participant ChatScreen as ChatScreen<br/>src/domains/chat/screen.rs:21
+    participant ConvStore as ConversationStore<br/>src/domains/chat/state.rs:47
+    participant ChatService as ChatService Coroutine<br/>src/domains/chat/screen.rs:62
+    participant SETTINGS as SETTINGS GlobalSignal<br/>src/domains/settings/state.rs:4
+    participant Repo as repo fns<br/>src/domains/chat/repo.rs
+    participant LlmClient as LlmClient<br/>src/domains/llm/client.rs:28
+    participant ProcessStream as process_stream<br/>src/domains/llm/providers.rs:7
+    participant SQLite as SQLite (lumina.db)
+    participant LLM_API as LLM API<br/>(OpenAI / Ollama)
 
-    User->>UI: Types message & clicks "Send"
-    UI->>Actor: Send(ChatAction::SendMessage)
-    
-    Actor->>DB: Save User Message
-    Actor->>UI: Update messages signal (Add user msg)
-    
-    Actor->>LLM: Request Stream (Provider: OpenAI/Ollama)
-    LLM-->>Actor: Token Stream (SSE/NDJSON)
-    
-    loop for each token
-        Actor->>UI: Update assistant msg signal (Reactive 60fps)
+    User->>ChatScreen: Types message & hits Enter<br/>onkeydown handler (screen.rs:275)
+    ChatScreen->>ChatService: chat_service.send(ChatAction::SendMessage(text))<br/>(screen.rs:277)
+
+    ChatService->>SETTINGS: SETTINGS.read().provider_preferences<br/>(screen.rs:67) — get default_llm, api_key, endpoint
+
+    alt New Conversation (active_id is None)
+        ChatService->>ChatService: Conversation::new("New Chat") (state.rs:14)
+        ChatService->>Repo: create_conversation(conn, new_conv) (repo.rs:56)
+        Repo->>SQLite: INSERT INTO conversations (spawn_blocking)
+        ChatService->>ConvStore: store.write().list.insert(0, new_conv)<br/>store.write().active_id = new_id (screen.rs:118-120)
     end
-    
-    LLM-->>Actor: Stream Completed
-    Actor->>DB: Save final Assistant Message
-    
-    opt if New Conversation
-        Actor->>LLM: Generate Title
-        Actor->>DB: Update Conversation Title
-        Actor->>Store: Update Sidebar titles (Signal)
+
+    ChatService->>ChatService: Message::new(&cid, "user", &text) (state.rs:35)
+    ChatService->>ConvStore: messages.push(user_msg) (screen.rs:125)<br/>→ reactive UI re-render
+    ChatService->>Repo: save_message(conn, user_msg) (repo.rs:79)
+    Repo->>SQLite: INSERT INTO messages (spawn_blocking)
+
+    ChatService->>ChatService: Build ChatRequest { model, messages, stream: true }<br/>(screen.rs:129-136)
+    ChatService->>ChatService: Message::new(&cid, "assistant", "") (screen.rs:138)
+    ChatService->>ConvStore: messages.push(assistant_msg) (screen.rs:140)<br/>→ reactive UI shows empty bubble
+
+    ChatService->>ProcessStream: process_stream(&llm_client, request) (screen.rs:142)
+
+    alt ProviderType::OpenAI
+        ProcessStream->>LlmClient: client.prepare_chat_request(request) (providers.rs:13)
+        LlmClient->>LLM_API: reqwest POST (client.rs:50-53)
+        LLM_API-->>ProcessStream: SSE stream (text/event-stream)
+        ProcessStream->>ProcessStream: Parse ChatResponseChunk.choices[0].delta.content<br/>(providers.rs:21-23)
+    else ProviderType::Ollama
+        ProcessStream->>LlmClient: client.stream_chat(request) (providers.rs:35)
+        LlmClient->>LLM_API: reqwest POST /api/chat
+        LLM_API-->>ProcessStream: NDJSON byte stream
+        ProcessStream->>ProcessStream: Parse OllamaChatResponse.message.content<br/>(providers.rs:50-55)
+    end
+
+    loop Each token from stream
+        ProcessStream-->>ChatService: Result<String, String> (token)
+        ChatService->>ConvStore: messages.write().find(m => m.id == assistant_id)<br/>msg.content.push_str(&token) (screen.rs:147-149)
+        ConvStore-->>ChatScreen: Reactive 60fps update
+    end
+
+    ProcessStream-->>ChatService: Stream completed
+    ChatService->>Repo: save_message(conn, assistant_msg) (repo.rs:79)
+    Repo->>SQLite: INSERT INTO messages (final content)
+
+    opt New Conversation (auto-title)
+        ChatService->>ChatService: Build title ChatRequest (screen.rs:165-173)
+        ChatService->>ProcessStream: process_stream(&llm_client, title_req) (screen.rs:176)
+        ProcessStream-->>ChatService: Title tokens
+        ChatService->>ChatService: Collect to new_title, trim quotes (screen.rs:177-181)
+        ChatService->>Repo: update_conversation_title(conn, cid, new_title) (repo.rs:67)
+        Repo->>SQLite: UPDATE conversations SET title = ? (spawn_blocking)
+        ChatService->>ConvStore: store.write().list.iter_mut().find(c => c.id == cid)<br/>c.title = new_title (screen.rs:184-186)
     end
 ```
 
@@ -131,24 +168,33 @@ Creating a new session involves coordinating local reactive state with backgroun
 ```mermaid
 sequenceDiagram
     actor User
-    participant Sidebar as Sidebar Widget
-    participant Store as ConversationStore (Signal)
-    participant Screen as ChatScreen (UI)
-    participant DB as SQLite (Local)
+    participant Sidebar as Sidebar<br/>src/domains/chat/widgets/sidebar.rs:8
+    participant ConvStore as ConversationStore<br/>src/domains/chat/state.rs:47
+    participant ChatScreen as ChatScreen<br/>src/domains/chat/screen.rs:21
+    participant Repo as repo fns<br/>src/domains/chat/repo.rs
+    participant SQLite as SQLite (lumina.db)
 
-    User->>Sidebar: Clicks "+ New Chat"
-    
-    Sidebar->>Store: Add new Conversation object to list
-    Sidebar->>Store: Set active_id = new_uuid
-    
-    par Background Persistence
-        Sidebar->>DB: INSERT into conversations
-    and UI Update
-        Store-->>Screen: use_effect(active_id changed)
-        Screen->>DB: SELECT messages WHERE conversation_id = new_uuid
-        DB-->>Screen: [] (Empty results)
-        Screen->>Screen: Clear messages signal
-    end
+    User->>Sidebar: Clicks "+ New Chat" button (sidebar.rs:21)
+    Sidebar->>Sidebar: Conversation::new("New Chat") (sidebar.rs:23, state.rs:14)
+    Sidebar->>ConvStore: store.write().list.insert(0, new_conv) (sidebar.rs:27)<br/>→ Sidebar re-renders with new entry
+    Sidebar->>ConvStore: store.write().active_id = Some(new_id) (sidebar.rs:28)
+    Sidebar->>Repo: spawn { create_conversation(conn, new_conv) } (sidebar.rs:31)<br/>Fire-and-forget background DB write
+    Repo->>SQLite: INSERT INTO conversations (spawn_blocking)
+
+    Note over ConvStore, ChatScreen: active_id change triggers use_effect
+    ConvStore-->>ChatScreen: use_effect detects active_id changed (screen.rs:47)
+    ChatScreen->>Repo: load_messages(conn, active_id, 50, 0) (screen.rs:52, repo.rs:90)
+    Repo->>SQLite: SELECT FROM messages WHERE conversation_id = ? (spawn_blocking)
+    SQLite-->>Repo: [] (Empty result set)
+    Repo-->>ChatScreen: Ok(Vec::new())
+    ChatScreen->>ChatScreen: messages.set(Vec::new()) (screen.rs:53-54)<br/>→ Chat area clears
+
+    Note over ChatScreen: Also loads sidebar conversation list on mount
+    ChatScreen->>Repo: get_all_conversations(conn) (screen.rs:34, repo.rs:33)
+    Repo->>SQLite: SELECT FROM conversations ORDER BY updated_at DESC (spawn_blocking)
+    SQLite-->>Repo: List of all conversations
+    Repo-->>ChatScreen: Ok(convos)
+    ChatScreen->>ConvStore: store.write().list = convos (screen.rs:35-41)<br/>→ Sidebar populated
 ```
 
 ## 🗺️ Roadmap

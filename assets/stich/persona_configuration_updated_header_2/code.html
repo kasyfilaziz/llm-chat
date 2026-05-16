@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Persona Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Nunito+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-tint": "#9dd3aa",
+                        "inverse-on-surface": "#2d312e",
+                        "secondary": "#d0c5b8",
+                        "on-tertiary": "#402d00",
+                        "on-surface-variant": "#c1c9bf",
+                        "tertiary-fixed": "#ffdea0",
+                        "on-tertiary-fixed-variant": "#594311",
+                        "background": "#101411",
+                        "outline-variant": "#414942",
+                        "outline": "#8b938a",
+                        "inverse-primary": "#376847",
+                        "surface-container-low": "#191d19",
+                        "on-secondary-fixed-variant": "#4d463c",
+                        "tertiary": "#e2c284",
+                        "secondary-fixed": "#ece1d3",
+                        "primary-container": "#4a7c59",
+                        "surface-bright": "#363a36",
+                        "surface": "#101411",
+                        "on-background": "#e0e3de",
+                        "on-secondary-fixed": "#201b12",
+                        "on-primary": "#01391c",
+                        "on-error": "#690005",
+                        "surface-container-high": "#272b27",
+                        "secondary-container": "#4f483e",
+                        "primary-fixed": "#b9efc5",
+                        "on-tertiary-fixed": "#261a00",
+                        "surface-dim": "#101411",
+                        "on-surface": "#e0e3de",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#00210e",
+                        "surface-container": "#1d211d",
+                        "primary": "#9dd3aa",
+                        "on-primary-container": "#e1ffe5",
+                        "surface-container-highest": "#323632",
+                        "on-tertiary-container": "#fff6ed",
+                        "error-container": "#93000a",
+                        "on-secondary-container": "#c1b7aa",
+                        "on-primary-fixed-variant": "#1e5031",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#362f26",
+                        "tertiary-container": "#886e38",
+                        "surface-variant": "#323632",
+                        "tertiary-fixed-dim": "#e2c284",
+                        "surface-container-lowest": "#0b0f0c",
+                        "secondary-fixed-dim": "#d0c5b8",
+                        "inverse-surface": "#e0e3de",
+                        "primary-fixed-dim": "#9dd3aa"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "lg": "24px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "base": "8px",
+                        "xs": "4px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Nunito Sans"],
+                        "label-md": ["Nunito Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"]
+                    },
+                    fontSize: {
+                        "body-lg": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "label-md": ["12px", { lineHeight: "1.4", fontWeight: "500" }],
+                        "headline-md": ["24px", { lineHeight: "1.3", fontWeight: "500" }],
+                        "headline-lg": ["32px", { lineHeight: "1.2", fontWeight: "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom Scrollbar for Terra Theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: theme('colors.surface'); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant'); 
+            border-radius: theme('borderRadius.full');
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline-variant'); 
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-lg h-screen overflow-hidden flex">
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto p-xl bg-background w-full">
+<div class="max-w-[1200px] mx-auto min-h-full flex flex-col pb-10">
+<header class="mb-10 w-full">
+<h1 class="text-4xl md:text-5xl font-headline-lg font-bold text-on-background mb-4">Persona Configuration</h1>
+<p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+    Create and manage customized AI personas with specific instructions, model settings, and connected knowledge vaults.
+</p>
+</header>
+<div class="flex flex-col lg:flex-row gap-xl flex-1">
+<!-- Left Column: Persona Library (35%) -->
+<section class="lg:w-[35%] flex flex-col gap-md">
+<div class="flex items-center justify-between mb-2">
+<h2 class="font-headline-md text-lg text-on-surface">Persona Library</h2>
+<button class="bg-surface-container-high hover:bg-primary-container/30 text-primary border border-outline-variant/50 hover:border-primary/50 p-sm rounded-lg transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+</div>
+<div class="space-y-md">
+<!-- Active Persona Card -->
+<div class="bg-surface-container-high border border-primary/40 rounded-xl p-md cursor-pointer hover:bg-surface-variant transition-colors relative overflow-hidden group shadow-[0_2px_8px_-2px_rgba(157,211,170,0.1)]">
+<div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-3xl opacity-50"></div>
+<div class="flex items-start justify-between mb-sm relative z-10">
+<div class="flex items-center gap-sm">
+<div class="bg-primary-container/20 p-xs rounded-md text-primary">
+<span class="material-symbols-outlined text-sm filled" data-icon="work">work</span>
+</div>
+<h3 class="font-label-md text-sm text-primary font-bold">Professional Assistant</h3>
+</div>
+<span class="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded-full font-label-md">Default</span>
+</div>
+<p class="font-body-lg text-xs text-on-surface-variant line-clamp-2">You are a highly efficient, concise, and professional corporate assistant. Prioritize clarity and actionable insights in all responses.</p>
+</div>
+<!-- Inactive Persona Card 1 -->
+<div class="bg-surface-container border border-outline-variant/30 rounded-xl p-md cursor-pointer hover:bg-surface-container-high hover:border-outline-variant transition-colors">
+<div class="flex items-start justify-between mb-sm">
+<div class="flex items-center gap-sm">
+<div class="bg-surface-variant p-xs rounded-md text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="edit_document">edit_document</span>
+</div>
+<h3 class="font-label-md text-sm text-on-surface">Creative Writer</h3>
+</div>
+</div>
+<p class="font-body-lg text-xs text-on-surface-variant line-clamp-2">You are an imaginative storyteller. Use evocative language, metaphors, and focus on narrative flow. Maintain a warm, engaging tone.</p>
+</div>
+<!-- Inactive Persona Card 2 -->
+<div class="bg-surface-container border border-outline-variant/30 rounded-xl p-md cursor-pointer hover:bg-surface-container-high hover:border-outline-variant transition-colors">
+<div class="flex items-start justify-between mb-sm">
+<div class="flex items-center gap-sm">
+<div class="bg-surface-variant p-xs rounded-md text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="code">code</span>
+</div>
+<h3 class="font-label-md text-sm text-on-surface">Code Expert</h3>
+</div>
+</div>
+<p class="font-body-lg text-xs text-on-surface-variant line-clamp-2">You are a senior software engineer. Provide robust, well-documented code snippets. Focus on performance, security, and best practices.</p>
+</div>
+</div>
+</section>
+<!-- Right Column: Editor & Preview (65%) -->
+<section class="lg:w-[65%] flex flex-col gap-lg">
+<!-- Editor Card -->
+<div class="bg-surface-container-low border border-outline-variant/20 rounded-2xl p-lg shadow-lg shadow-black/20 flex flex-col gap-lg">
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-md">
+<div>
+<h2 class="font-headline-md text-xl text-on-surface">Persona Editor</h2>
+<p class="font-label-md text-sm text-on-surface-variant mt-1">Configure instructions and behavior for this persona.</p>
+</div>
+<div class="flex items-center gap-sm">
+<button class="text-error hover:bg-error/10 p-sm rounded-lg transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+<button class="bg-primary text-on-primary font-label-md font-bold px-md py-sm rounded-lg hover:bg-primary-fixed transition-colors shadow-[0_2px_10px_0_rgba(157,211,170,0.15)]">
+                                    Save Changes
+                                </button>
+</div>
+</div>
+<!-- Name Input -->
+<div class="space-y-sm">
+<label class="font-label-md text-sm text-on-surface-variant block">Persona Name</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">badge</span>
+</div>
+<input class="bg-surface-container-highest border border-outline-variant/50 text-on-surface text-base rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors w-full font-body-lg" type="text" value="Professional Assistant"/>
+</div>
+</div>
+<!-- Model Configuration -->
+<div class="space-y-sm">
+<label class="font-label-md text-sm text-on-surface-variant block">Model Configuration</label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">cloud</span>
+</div>
+<select class="bg-surface-container-highest border border-outline-variant/50 text-on-surface text-sm rounded-lg pl-10 pr-10 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors w-full font-body-lg appearance-none">
+<option value="openai">OpenAI</option>
+<option selected="" value="anthropic">Anthropic</option>
+<option value="google">Google</option>
+<option value="local">Local Model</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">memory</span>
+</div>
+<select class="bg-surface-container-highest border border-outline-variant/50 text-on-surface text-sm rounded-lg pl-10 pr-10 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors w-full font-body-lg appearance-none">
+<option value="claude-3-opus">Claude 3 Opus</option>
+<option selected="" value="claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+<option value="claude-3-haiku">Claude 3 Haiku</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- System Instructions -->
+<div class="space-y-sm flex-1 flex flex-col">
+<label class="font-label-md text-sm text-on-surface-variant flex items-center justify-between">
+<span>System Instructions</span>
+<span class="text-xs text-on-surface-variant/70">Markdown Supported</span>
+</label>
+<textarea class="bg-surface-container-highest border border-outline-variant/50 text-on-surface text-sm rounded-lg p-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors w-full font-body-lg resize-y min-h-[200px] flex-1 leading-relaxed">You are a highly efficient, concise, and professional corporate assistant. 
+
+Core Directives:
+- Prioritize clarity and actionable insights in all responses.
+- Use professional formatting (bullet points, bold text for key terms).
+- Avoid fluff, excessive politeness, or conversational filler.
+- If a request is ambiguous, ask for specific clarifying details immediately rather than guessing.
+- Maintain an objective, neutral tone at all times.</textarea>
+</div>
+<!-- Settings Toggles -->
+<div class="bg-surface-container-highest rounded-xl p-md border border-outline-variant/20 flex items-center justify-between mt-2">
+<div>
+<h4 class="font-label-md text-sm text-on-surface">Set as Default Persona</h4>
+<p class="font-body-lg text-xs text-on-surface-variant mt-1">Use this persona automatically for all new chats.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:border-outline after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary peer-checked:after:bg-on-primary"></div>
+</label>
+</div>
+</div>
+<!-- Persona Knowledge Library Card -->
+<div class="bg-surface-container-low border border-outline-variant/20 rounded-2xl p-lg shadow-lg shadow-black/10 flex flex-col">
+<div class="flex items-center justify-between mb-lg border-b border-outline-variant/20 pb-md">
+<div>
+<h2 class="font-headline-md text-xl text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">folder_managed</span>
+                                    Connected Knowledge
+                                </h2>
+<p class="font-label-md text-sm text-on-surface-variant mt-1">Files and context specifically attached to this persona.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary/10 text-primary border border-primary/30 px-4 py-2 rounded-lg font-medium hover:bg-primary/20 transition-colors shadow-sm text-sm">
+<span class="material-symbols-outlined text-[20px]">library_add</span>
+<span>Add Knowledge Source</span>
+</button>
+</div>
+<!-- Knowledge List -->
+<div class="flex flex-col gap-3">
+<!-- Knowledge Row 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/20 shadow-[0_4px_20px_rgba(46,50,48,0.06)] flex items-center justify-between hover:bg-surface-container-high transition-colors group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-error-container/20 flex items-center justify-center text-error shrink-0">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-headline font-semibold text-sm text-on-background truncate max-w-[300px]">Q3_Corporate_Guidelines.pdf</h4>
+<span class="text-on-surface-variant text-xs">2.4 MB • PDF Document</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 text-xs text-primary bg-primary/5 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Indexed</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1.5 rounded-lg hover:bg-surface-container opacity-0 group-hover:opacity-100" title="Remove">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Knowledge Row 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/20 shadow-[0_4px_20px_rgba(46,50,48,0.06)] flex items-center justify-between hover:bg-surface-container-high transition-colors group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">description</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-headline font-semibold text-sm text-on-background truncate max-w-[300px]">Brand_Tone_Voice_V2.docx</h4>
+<span class="text-on-surface-variant text-xs">845 KB • Word Document</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 text-xs text-primary bg-primary/5 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Indexed</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1.5 rounded-lg hover:bg-surface-container opacity-0 group-hover:opacity-100" title="Remove">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Knowledge Row 3 (Vault Connection) -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-tertiary/20 shadow-[0_4px_20px_rgba(46,50,48,0.06)] flex items-center justify-between hover:bg-surface-container-high transition-colors group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container/20 flex items-center justify-center text-tertiary shrink-0">
+<span class="material-symbols-outlined text-[20px] filled">database</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-headline font-semibold text-sm text-on-background truncate max-w-[300px]">HR Policies Vault</h4>
+<span class="text-on-surface-variant text-xs">Connected Vault • 87 Files</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 text-xs text-tertiary bg-tertiary/5 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[14px]">link</span>
+<span>Linked</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1.5 rounded-lg hover:bg-surface-container opacity-0 group-hover:opacity-100" title="Remove Link">
+<span class="material-symbols-outlined text-[18px]">link_off</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</body></html>

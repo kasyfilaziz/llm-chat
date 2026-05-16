@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html class="light dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Terra Workspace - Sessions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&amp;family=Nunito+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400..900&amp;family=Nunito+Sans:opsz,wght@6..12,200..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-secondary": "#362f26", surface: "#101411", "on-secondary-container": "#c1b7aa", "on-primary-container": "#e1ffe5", "on-error": "#690005", "tertiary-container": "#886e38", "surface-dim": "#101411", secondary: "#d0c5b8", "surface-variant": "#323632", "surface-bright": "#363a36", "on-background": "#e0e3de", "on-primary-fixed": "#00210e", "inverse-primary": "#376847", "primary-fixed-dim": "#9dd3aa", "surface-container-high": "#272b27", "surface-container": "#1d211d", "tertiary-fixed-dim": "#e2c284", "surface-container-highest": "#323632", "on-secondary-fixed": "#201b12", primary: "#9dd3aa", "error-container": "#93000a", "primary-container": "#4a7c59", outline: "#8b938a", "outline-variant": "#414942", "on-tertiary-fixed": "#261a00", "on-error-container": "#ffdad6", "secondary-container": "#4f483e", error: "#ffb4ab", "surface-tint": "#9dd3aa", "secondary-fixed": "#ece1d3", "primary-fixed": "#b9efc5", "on-tertiary-fixed-variant": "#594311", "on-secondary-fixed-variant": "#4d463c", "secondary-fixed-dim": "#d0c5b8", "on-primary": "#01391c", "surface-container-low": "#191d19", "on-surface": "#e0e3de", "inverse-surface": "#e0e3de", "on-surface-variant": "#c1c9bf", "inverse-on-surface": "#2d312e", "tertiary-fixed": "#ffdea0", "on-tertiary": "#402d00", background: "#101411", tertiary: "#e2c284", "surface-container-lowest": "#0b0f0c", "on-tertiary-container": "#fff6ed", "on-primary-fixed-variant": "#1e5031"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {xs: "4px", lg: "24px", base: "8px", xl: "32px", md: "16px", sm: "8px"}, fontFamily: {headline: ["Plus Jakarta Sans"], display: ["Plus Jakarta Sans"], body: ["Nunito Sans"], label: ["Nunito Sans"], "label-md": ["Nunito Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Nunito Sans"], "headline-md": ["Plus Jakarta Sans"]}, fontSize: {"label-md": ["12px", {lineHeight: "1.4", fontWeight: "500"}], "headline-lg": ["32px", {lineHeight: "1.2", fontWeight: "600"}], "body-lg": ["16px", {lineHeight: "1.6", fontWeight: "400"}], "headline-md": ["24px", {lineHeight: "1.3", fontWeight: "500"}]}}}};</script>
+<style>
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background-color: #faf6f0;
+            color: #2e3230;
+        }
+        h1, h2, h3, h4, h5, h6, .font-headline {
+            font-family: 'Literata', serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for organic feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e4e0d8; 
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dbd7cf; 
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background h-screen flex overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<nav class="bg-[#faf6f0] dark:bg-stone-950 font-['Nunito_Sans'] text-sm h-screen w-64 border-r border-stone-200/40 dark:border-stone-800/40 flat no shadows flex flex-col h-full py-4 border-r overflow-y-auto shrink-0 transition-all duration-200 ease-in-out">
+<!-- Header -->
+<div class="px-6 mb-8 flex items-center gap-3">
+<img alt="User Workspace Avatar" class="w-10 h-10 rounded-full object-cover shadow-sm border border-outline-variant/30" data-alt="A small circular avatar showing a professional looking person in a warm natural light setting, earthy tones, organic feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOHm9rPmKHdgrCr3I18ZmLqEWekIvmkvaWzdniGpJeVwR8_ejc_5ImtwKJ4PS9HQuFBLhkoZ9MmrzYYl77nqaY7SJwRRiBqFAZ3LjggXjuVuMahWdsGJ_yXmTjJtPUPHaDe-3gBd1DOGNSPb1eDq2ApdVgLTqh_Lu8ZdLRsyLMyHXC-qsPJdZ9Sf9nDwMEE7hiLB-WETD0Mk5SCh4bfImQx8H2NrMSWUlVC5ArJa_nJOvFg_Q1p2KAosJr9EUv7cvK9e5SN3002Dc"/>
+<div>
+<h1 class="font-['Literata'] font-semibold text-lg text-[#4a7c59]">Terra Workspace</h1>
+<p class="text-xs text-on-surface-variant opacity-80">Professional LLM</p>
+</div>
+</div>
+<!-- Main Navigation Tabs -->
+<ul class="flex-1 space-y-1 pr-4">
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span>Chat</span>
+</a>
+</li>
+<li>
+<!-- ACTIVE STATE: Sessions -->
+<a class="flex items-center gap-3 px-6 py-3 text-[#4a7c59] dark:text-emerald-400 font-bold bg-[#4a7c59]/10 rounded-r-full transition-colors" href="#">
+<span class="material-symbols-outlined icon-fill" data-icon="folder_managed">folder_managed</span>
+<span>Sessions</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span>Context Vault</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span>Hooks</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</li>
+</ul>
+<!-- Footer Navigation Tabs -->
+<ul class="space-y-1 mt-auto pr-4 pt-4 border-t border-surface-variant/50">
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Help</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full bg-surface-container-lowest">
+<!-- Top Action Bar -->
+<div class="pt-10 px-8 pb-8 shrink-0 flex justify-between items-start">
+<div>
+<h1 class="text-4xl md:text-5xl font-headline font-bold text-on-background mb-4">Session Vault</h1>
+<p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                    Manage and organize your conversations.
+                </p>
+</div>
+<div class="flex items-center gap-4 mt-2">
+<!-- Search -->
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 pointer-events-none">search</span>
+<input class="w-full bg-surface rounded-full py-2.5 pl-10 pr-4 text-sm border border-outline-variant/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50 outline-none text-on-surface" placeholder="Search sessions..." type="text"/>
+</div>
+<!-- Primary Action -->
+<button class="bg-primary text-on-primary hover:bg-primary-fixed-dim transition-colors px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 shadow-[0_4px_14px_rgba(74,124,89,0.15)]">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Folder
+                </button>
+</div>
+</div>
+<!-- Split Layout: Explorer & Details -->
+<div class="flex-1 flex overflow-hidden border-t border-surface-variant/30">
+<!-- Left Panel: Directory Explorer (Bento-ish Sidebar) -->
+<aside class="w-72 border-r border-surface-variant/30 bg-surface flex flex-col shrink-0 overflow-y-auto">
+<div class="p-4">
+<h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 px-2">Workspaces</h3>
+<ul class="space-y-1">
+<!-- Active Folder -->
+<li>
+<button class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-container-high text-on-surface font-medium border border-outline-variant/20 shadow-sm transition-all group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary icon-fill text-[20px]">folder</span>
+<span>Project Horizon</span>
+</div>
+<span class="text-xs bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full">12</span>
+</button>
+<!-- Subfolders -->
+<ul class="ml-6 mt-1 space-y-1 border-l-2 border-surface-variant/50 pl-2">
+<li>
+<button class="w-full flex items-center gap-2 px-3 py-2 rounded-md hover:bg-surface-container transition-colors text-sm text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[18px]">folder</span>
+<span>Drafting</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center gap-2 px-3 py-2 rounded-md hover:bg-surface-container transition-colors text-sm text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[18px]">folder</span>
+<span>Research Data</span>
+</button>
+</li>
+</ul>
+</li>
+<!-- Inactive Folders -->
+<li>
+<button class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-medium transition-all group mt-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">folder</span>
+<span>Client Memos</span>
+</div>
+<span class="text-xs bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">5</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-medium transition-all group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">folder</span>
+<span>Personal Brainstorm</span>
+</div>
+<span class="text-xs bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">24</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-medium transition-all group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] group-hover:text-tertiary transition-colors">archive</span>
+<span>Archived</span>
+</div>
+</button>
+</li>
+</ul>
+</div>
+</aside>
+<!-- Right Panel: Detailed View (Bento Grid Layout) -->
+<section class="flex-1 p-8 overflow-y-auto bg-surface-container-lowest">
+<!-- Folder Header & Actions -->
+<div class="flex justify-between items-end mb-8 pb-4 border-b border-surface-variant/40">
+<div>
+<h1 class="font-headline text-3xl text-on-surface font-bold">Project Horizon</h1>
+<p class="text-sm text-on-surface-variant mt-1">Created on Oct 12, 2023 • 12 Active Sessions</p>
+</div>
+<div class="flex gap-2">
+<button aria-label="Rename" class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors group relative">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Rename</span>
+</button>
+<button aria-label="Move" class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors group relative">
+<span class="material-symbols-outlined text-[20px]">drive_file_move</span>
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Move</span>
+</button>
+<button aria-label="Delete" class="p-2 rounded-lg bg-error-container/30 hover:bg-error-container text-error transition-colors group relative">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Delete</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid of Sessions -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Session Card 1 -->
+<div class="bg-surface rounded-xl p-5 border border-outline-variant/30 hover:shadow-[0_4px_20px_rgba(46,50,48,0.06)] hover:border-primary/30 transition-all cursor-pointer flex flex-col group relative overflow-hidden">
+<!-- Decorative top accent -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-container to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-primary/80 bg-primary/10 p-2 rounded-lg">chat_bubble</span>
+<span class="text-xs font-medium text-tertiary bg-tertiary/10 px-2 py-1 rounded-full">Drafting</span>
+</div>
+<h4 class="font-headline text-lg font-bold text-on-surface mb-2 leading-tight group-hover:text-primary transition-colors">Initial Architecture Proposal</h4>
+<p class="text-sm text-on-surface-variant line-clamp-2 mb-4 flex-1">Discussion outlining the core components for the new infrastructure migration, focusing on scalability and earthy tones.</p>
+<div class="flex items-center justify-between text-xs text-on-surface-variant pt-3 border-t border-surface-variant/50">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_today</span> Oct 24, 2:30 PM</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">history</span> 24 turns</span>
+</div>
+</div>
+<!-- Session Card 2 -->
+<div class="bg-surface rounded-xl p-5 border border-outline-variant/30 hover:shadow-[0_4px_20px_rgba(46,50,48,0.06)] hover:border-primary/30 transition-all cursor-pointer flex flex-col group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-container to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-primary/80 bg-primary/10 p-2 rounded-lg">code</span>
+<span class="text-xs font-medium text-tertiary bg-tertiary/10 px-2 py-1 rounded-full">Development</span>
+</div>
+<h4 class="font-headline text-lg font-bold text-on-surface mb-2 leading-tight group-hover:text-primary transition-colors">API Endpoint Refactoring</h4>
+<p class="text-sm text-on-surface-variant line-clamp-2 mb-4 flex-1">Refactoring the legacy endpoints to support GraphQL and improve overall response times by 30%.</p>
+<div class="flex items-center justify-between text-xs text-on-surface-variant pt-3 border-t border-surface-variant/50">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_today</span> Oct 22, 10:15 AM</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">history</span> 56 turns</span>
+</div>
+</div>
+<!-- Session Card 3 -->
+<div class="bg-surface rounded-xl p-5 border border-outline-variant/30 hover:shadow-[0_4px_20px_rgba(46,50,48,0.06)] hover:border-primary/30 transition-all cursor-pointer flex flex-col group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-container to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-primary/80 bg-primary/10 p-2 rounded-lg">lightbulb</span>
+<span class="text-xs font-medium text-secondary bg-secondary/10 px-2 py-1 rounded-full">Ideation</span>
+</div>
+<h4 class="font-headline text-lg font-bold text-on-surface mb-2 leading-tight group-hover:text-primary transition-colors">Marketing Copy Ideas</h4>
+<p class="text-sm text-on-surface-variant line-clamp-2 mb-4 flex-1">Brainstorming natural, organic messaging for the upcoming Q4 campaign focused on rooted warmth.</p>
+<div class="flex items-center justify-between text-xs text-on-surface-variant pt-3 border-t border-surface-variant/50">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_today</span> Oct 20, 4:45 PM</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">history</span> 12 turns</span>
+</div>
+</div>
+<!-- Session Card 4 (Pinned/Highlighted) -->
+<div class="bg-secondary-container rounded-xl p-5 border border-outline-variant/30 shadow-[0_4px_20px_rgba(46,50,48,0.04)] hover:shadow-[0_4px_20px_rgba(46,50,48,0.08)] transition-all cursor-pointer flex flex-col group relative overflow-hidden col-span-1 md:col-span-2 lg:col-span-2">
+<div class="absolute top-4 right-4 text-tertiary">
+<span class="material-symbols-outlined icon-fill">push_pin</span>
+</div>
+<div class="flex justify-between items-start mb-3 pr-8">
+<span class="material-symbols-outlined text-primary/80 bg-surface/50 p-2 rounded-lg">summarize</span>
+<span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">Executive Summary</span>
+</div>
+<h4 class="font-headline text-xl font-bold text-on-surface mb-2 leading-tight group-hover:text-primary transition-colors w-3/4">Final Review: Horizon Deliverables</h4>
+<p class="text-sm text-on-surface-variant line-clamp-2 mb-4 w-5/6">Comprehensive summary of all tasks completed under Project Horizon, ready for stakeholder presentation tomorrow morning.</p>
+<div class="mt-auto flex items-center gap-4 text-xs text-on-surface-variant pt-3 border-t border-outline-variant/20">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_today</span> Today, 9:00 AM</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">history</span> 8 turns</span>
+<span class="flex items-center gap-1 text-primary"><span class="material-symbols-outlined text-[14px]">check_circle</span> Ready</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

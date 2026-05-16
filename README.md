@@ -88,6 +88,69 @@ All development on Lumina adheres to our Project Constitution @specify/memory/co
    dx serve
    ```
 
+## 🔄 Core User Flows
+
+### 1. Chat Flow (Message Orchestration)
+The diagram below illustrates how Lumina handles a user message using an asynchronous actor model (Dioxus `use_coroutine`) to ensure the UI thread never blocks during SQLite I/O or LLM streaming.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as ChatScreen (UI)
+    participant Store as ConversationStore (Signal)
+    participant Actor as ChatService (Coroutine)
+    participant DB as SQLite (Local)
+    participant LLM as LLM Provider (API/Local)
+
+    User->>UI: Types message & clicks "Send"
+    UI->>Actor: Send(ChatAction::SendMessage)
+    
+    Actor->>DB: Save User Message
+    Actor->>UI: Update messages signal (Add user msg)
+    
+    Actor->>LLM: Request Stream (Provider: OpenAI/Ollama)
+    LLM-->>Actor: Token Stream (SSE/NDJSON)
+    
+    loop for each token
+        Actor->>UI: Update assistant msg signal (Reactive 60fps)
+    end
+    
+    LLM-->>Actor: Stream Completed
+    Actor->>DB: Save final Assistant Message
+    
+    opt if New Conversation
+        Actor->>LLM: Generate Title
+        Actor->>DB: Update Conversation Title
+        Actor->>Store: Update Sidebar titles (Signal)
+    end
+```
+
+### 2. New Session Flow (Reactive Sidebar)
+Creating a new session involves coordinating local reactive state with background database persistence.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Sidebar as Sidebar Widget
+    participant Store as ConversationStore (Signal)
+    participant Screen as ChatScreen (UI)
+    participant DB as SQLite (Local)
+
+    User->>Sidebar: Clicks "+ New Chat"
+    
+    Sidebar->>Store: Add new Conversation object to list
+    Sidebar->>Store: Set active_id = new_uuid
+    
+    par Background Persistence
+        Sidebar->>DB: INSERT into conversations
+    and UI Update
+        Store-->>Screen: use_effect(active_id changed)
+        Screen->>DB: SELECT messages WHERE conversation_id = new_uuid
+        DB-->>Screen: [] (Empty results)
+        Screen->>Screen: Clear messages signal
+    end
+```
+
 ## 🗺️ Roadmap
 
 We follow a **"Tracer Bullet" (Vertical Slice)** methodology to ensure the Dioxus UI, database, and asynchronous LLM network calls are constantly integrated, prioritizing a lightweight footprint.

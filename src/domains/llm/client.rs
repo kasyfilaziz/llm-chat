@@ -39,32 +39,17 @@ impl LlmClient {
     pub fn prepare_chat_request(&self, request: ChatRequest) -> reqwest::RequestBuilder {
         let mut rb = self.client.post(&self.url);
         
-        if matches!(self.provider, ProviderType::OpenAI) {
+        // Add Authorization header if a key is provided
+        if !self.key.is_empty() {
             rb = rb.header("Authorization", format!("Bearer {}", self.key));
         }
 
         rb.json(&request)
     }
 
-    fn adapt_request(&self, mut rb: reqwest::RequestBuilder) -> reqwest::RequestBuilder {
-        let mode = crate::utils::env::get_var_optional("API_OLLAMA_MODE").unwrap_or_else(|| "local".to_string());
-        
-        if self.provider == ProviderType::Ollama && mode == "cloud" {
-            // Adapt for Ollama Cloud (injecting auth and project headers)
-            if !self.key.is_empty() && self.key != "not-needed" {
-                // rb = rb.header("X-Ollama-Auth", &self.key);
-                rb = rb.header("Authorization", format!("Bearer {}", self.key));
-            }
-            rb = rb.header("X-Ollama-Project", "lumina-default");
-        }
-        
-        rb
-    }
-
     pub async fn stream_chat(&self, request: ChatRequest) -> reqwest::Result<reqwest::Response> {
-        info!("Sending request to {}: {:?}", self.url, request);
-        let mut rb = self.prepare_chat_request(request);
-        rb = self.adapt_request(rb);
+        info!("Sending request to {} (Provider: {:?}): {:?}", self.url, self.provider, request);
+        let rb = self.prepare_chat_request(request);
         rb.send().await
     }
 }

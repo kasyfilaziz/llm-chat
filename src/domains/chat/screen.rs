@@ -65,16 +65,26 @@ pub fn ChatScreen() -> Element {
             while let Some(action) = rx.next().await {
                 // Instantly grab latest settings
                 let settings = crate::domains::settings::state::SETTINGS.read().clone();
-                let provider = settings.provider_preferences.default_llm.clone();
-                let (url, key) = if provider == "ollama" {
-                    (format!("{}/api/chat", settings.provider_preferences.ollama_endpoint), "".to_string())
-                } else {
-                    ("https://api.openai.com/v1/chat/completions".to_string(), settings.provider_preferences.openai_api_key.clone())
+                let provider_type = ProviderType::from(settings.provider_preferences.default_llm.as_str());
+
+                let (url, key) = match provider_type {
+                    ProviderType::Ollama => {
+                        let base_url = settings.provider_preferences.ollama_endpoint.trim_end_matches('/');
+                        (format!("{}/api/chat", base_url), "".to_string())
+                    }
+                    ProviderType::OpenAI => {
+                        ("https://api.openai.com/v1/chat/completions".to_string(), settings.provider_preferences.openai_api_key.clone())
+                    }
                 };
-                let model = if provider == "ollama" { "llama3".to_string() } else { "gpt-4-turbo".to_string() };
+
+                let model = if matches!(provider_type, ProviderType::Ollama) {
+                    "gemma4:31b-cloud".to_string()
+                } else {
+                    "gpt-4-turbo".to_string()
+                };
 
                 let llm_client = LlmClient::new(
-                    ProviderType::from(provider.as_str()),
+                    provider_type,
                     url,
                     key,
                     model,
@@ -104,7 +114,7 @@ pub fn ChatScreen() -> Element {
                             let new_conv = Conversation::new("New Chat");
                             active_id = Some(new_conv.id.clone());
                             let _ = create_conversation(conn.clone(), new_conv.clone()).await;
-                            
+
                             let mut store_mut = store.write();
                             store_mut.list.insert(0, new_conv);
                             store_mut.active_id = active_id.clone();
@@ -113,7 +123,7 @@ pub fn ChatScreen() -> Element {
                         let cid = active_id.unwrap();
                         let user_msg = Message::new(&cid, "user", &text);
                         messages.push(user_msg.clone());
-                        
+
                         let _ = save_message(conn.clone(), user_msg).await;
 
                         let request = ChatRequest {
@@ -161,7 +171,7 @@ pub fn ChatScreen() -> Element {
                                         ],
                                         stream: false,
                                     };
-                                    
+
                                     // Normally we would use non-streaming for title, but we can reuse stream for now and collect
                                     if let Ok(mut title_stream) = process_stream(&llm_client, title_req).await {
                                         let mut new_title = String::new();
@@ -216,7 +226,7 @@ pub fn ChatScreen() -> Element {
                     for msg in messages.read().iter() {
                         MessageBubble { message: msg.clone() }
                     }
-                    
+
                     if let Some(err) = error_msg.read().as_ref() {
                         div { class: "flex justify-center my-4",
                             div { class: "bg-red-50 border border-red-200 text-red-600 px-6 py-3 rounded-2xl text-sm shadow-sm flex items-center gap-2",
@@ -235,7 +245,7 @@ pub fn ChatScreen() -> Element {
                             div { class: "bg-red-50 p-4 rounded-xl border border-red-200 flex justify-between items-center mb-2 animate-in fade-in slide-in-from-bottom-2",
                                 span { class: "text-red-700 text-sm font-medium", "Permanently delete all messages?" }
                                 div { class: "flex gap-2",
-                                    Button { 
+                                    Button {
                                         class: "bg-red-600 hover:bg-red-700 !py-1 !px-4 text-xs",
                                         onclick: move |_| {
                                             chat_service.send(ChatAction::ClearChat);
@@ -243,7 +253,7 @@ pub fn ChatScreen() -> Element {
                                         },
                                         "Yes, Clear"
                                     }
-                                    Button { 
+                                    Button {
                                         class: "bg-slate-200 !text-slate-700 hover:bg-slate-300 !py-1 !px-4 text-xs",
                                         onclick: move |_| show_confirm.set(false),
                                         "Cancel"

@@ -2,6 +2,7 @@ mod app;
 mod db;
 mod components;
 mod domains;
+mod layout;
 mod utils;
 
 use app::App;

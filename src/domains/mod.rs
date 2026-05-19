@@ -1,4 +1,5 @@
 pub mod chat;
 pub mod llm;
-pub mod settings;
 pub mod mcp;
+pub mod sessions;
+pub mod settings;

@@ -9,17 +9,17 @@ pub fn SettingsScreen() -> Element {
 
     rsx! {
         div { class: "p-8 max-w-2xl mx-auto w-full",
-            h2 { class: "text-2xl font-bold mb-6", "Settings" }
-            
+            h2 { class: "text-2xl font-bold mb-6 text-on-surface", "Settings" }
+
             div { class: "space-y-6",
-                div { class: "bg-white p-6 rounded-xl border border-slate-200 shadow-sm",
-                    h3 { class: "text-lg font-medium mb-4 border-b pb-2", "Providers" }
-                    
+                div { class: "bg-surface-container p-6 rounded-xl border border-outline-variant/20",
+                    h3 { class: "text-lg font-medium mb-4 pb-2 text-on-surface border-b border-outline-variant/20", "Providers" }
+
                     div { class: "space-y-4",
                         div {
-                            label { class: "block text-sm font-medium text-slate-700 mb-1", "Default LLM" }
+                            label { class: "block text-sm font-medium text-on-surface-variant mb-1", "Default LLM" }
                             select {
-                                class: "w-full border border-slate-300 rounded-md px-3 py-2 outline-none focus:border-primary",
+                                class: "w-full bg-surface-container-high border border-outline-variant/30 rounded-xl px-3 py-2 text-sm text-on-surface outline-none focus:border-primary/50",
                                 value: SETTINGS.read().provider_preferences.default_llm.clone(),
                                 onchange: move |evt| {
                                     SETTINGS.write().provider_preferences.default_llm = evt.value();
@@ -29,7 +29,7 @@ pub fn SettingsScreen() -> Element {
                             }
                         }
                         div {
-                            label { class: "block text-sm font-medium text-slate-700 mb-1", "OpenAI API Key" }
+                            label { class: "block text-sm font-medium text-on-surface-variant mb-1", "OpenAI API Key" }
                             Input {
                                 value: SETTINGS.read().provider_preferences.openai_api_key.clone(),
                                 placeholder: "sk-...",
@@ -39,7 +39,7 @@ pub fn SettingsScreen() -> Element {
                             }
                         }
                         div {
-                            label { class: "block text-sm font-medium text-slate-700 mb-1", "Ollama Endpoint" }
+                            label { class: "block text-sm font-medium text-on-surface-variant mb-1", "Ollama Endpoint" }
                             Input {
                                 value: SETTINGS.read().provider_preferences.ollama_endpoint.clone(),
                                 placeholder: "http://127.0.0.1:11434",
@@ -50,10 +50,10 @@ pub fn SettingsScreen() -> Element {
                         }
                     }
                 }
-                
-                div { class: "bg-white p-6 rounded-xl border border-slate-200 shadow-sm",
-                    h3 { class: "text-lg font-medium mb-4 border-b pb-2", "MCP Servers" }
-                    
+
+                div { class: "bg-surface-container p-6 rounded-xl border border-outline-variant/20",
+                    h3 { class: "text-lg font-medium mb-4 pb-2 text-on-surface border-b border-outline-variant/20", "MCP Servers" }
+
                     div { class: "space-y-4",
                         {SETTINGS.read().mcp_servers.iter().enumerate().map(|(idx, server)| {
                             let name = server.name.clone();
@@ -62,13 +62,13 @@ pub fn SettingsScreen() -> Element {
                             rsx! {
                                 div {
                                     key: "{idx}",
-                                    class: "flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-md",
+                                    class: "flex items-center gap-2 p-3 bg-surface-container-high border border-outline-variant/20 rounded-xl",
                                     div { class: "flex-1",
-                                        p { class: "font-medium text-sm", "{name}" }
-                                        p { class: "text-xs text-slate-500", "{path} {args}" }
+                                        p { class: "font-medium text-sm text-on-surface", "{name}" }
+                                        p { class: "text-xs text-secondary/60", "{path} {args}" }
                                     }
                                     button {
-                                        class: "text-red-500 hover:text-red-700 p-2",
+                                        class: "text-red-500 hover:text-red-400 p-2 transition-colors",
                                         onclick: move |_| {
                                             SETTINGS.write().mcp_servers.remove(idx);
                                         },
@@ -78,7 +78,7 @@ pub fn SettingsScreen() -> Element {
                             }
                         })}
                         button {
-                            class: "text-sm text-primary font-medium hover:underline",
+                            class: "text-sm text-primary font-medium hover:text-primary-container transition-colors",
                             onclick: move |_| {
                                 SETTINGS.write().mcp_servers.push(McpServerConfig {
                                     name: "New Server".into(),
@@ -90,10 +90,10 @@ pub fn SettingsScreen() -> Element {
                         }
                     }
                 }
-                
-                div { class: "flex justify-end gap-3 pt-4",
+
+                div { class: "flex justify-end gap-3 pt-4 items-center",
                     if show_success() {
-                        span { class: "text-green-600 text-sm flex items-center", "Settings saved!" }
+                        span { class: "text-tertiary text-sm flex items-center", "✓ Settings saved!" }
                     }
                     Button {
                         onclick: move |_| {

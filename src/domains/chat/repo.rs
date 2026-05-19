@@ -111,6 +111,7 @@ pub async fn load_messages(conn: Arc<Mutex<Connection>>, conversation_id: String
     }).await.map_err(|e| e.to_string())?
 }
 
+#[allow(dead_code)]
 pub async fn clear_messages(conn: Arc<Mutex<Connection>>, conversation_id: String) -> Result<(), String> {
     tokio::task::spawn_blocking(move || {
         let conn = conn.lock().map_err(|e| e.to_string())?;

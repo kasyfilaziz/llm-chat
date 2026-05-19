@@ -2,14 +2,22 @@ use dioxus::prelude::*;
 use crate::db::Db;
 use crate::domains::chat::repo::init_db;
 use crate::domains::chat::screen::ChatScreen;
+use crate::domains::sessions::screen::SessionsPage;
+use crate::domains::settings::screen::SettingsScreen;
 use crate::domains::mcp::state::McpEvent;
 use crate::domains::mcp::client::start_mcp_servers;
 use futures_util::StreamExt;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
-enum Route {
-    #[route("/")]
-    ChatScreen {},
+#[rustfmt::skip]
+pub enum Route {
+    #[layout(crate::layout::RootLayout)]
+        #[route("/")]
+        SessionsPage {},
+        #[route("/chat")]
+        ChatScreen {},
+        #[route("/settings")]
+        SettingsScreen {},
 }
 
 #[allow(non_snake_case)]
@@ -20,6 +28,7 @@ pub fn App() -> Element {
         {
             let lock = conn.lock().expect("Failed to lock DB");
             init_db(&lock).expect("Failed to init DB schema");
+            let _ = crate::domains::sessions::repo::init_db(&lock);
         }
         conn
     });

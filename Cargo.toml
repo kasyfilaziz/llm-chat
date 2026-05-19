@@ -22,4 +22,5 @@ dioxus-stores = "0.7.9"
 serde_yaml_ng = "0.10.0"
 directories = "6.0.0"
 rmcp = { version = "1.7.0", features = ["client", "transport-child-process"] }
+arboard = "3.4"
 

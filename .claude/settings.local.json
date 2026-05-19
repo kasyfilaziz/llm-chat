@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:crates.io)",
+      "mcp__lightpanda__goto"
+    ]
+  }
+}

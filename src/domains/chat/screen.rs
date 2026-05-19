@@ -1,20 +1,20 @@
 use dioxus::prelude::*;
 use crate::domains::chat::state::{Message, ConversationStore, Conversation};
 use crate::domains::chat::widgets::message::MessageBubble;
-use crate::domains::chat::widgets::sidebar::Sidebar;
+use crate::domains::chat::widgets::input_area::InputArea;
+use crate::domains::chat::widgets::prompt_suggestions::PromptSuggestions;
 use crate::domains::llm::client::{LlmClient, ProviderType};
 use crate::domains::llm::models::{ChatMessage, ChatRequest};
 use crate::domains::llm::providers::process_stream;
 use futures_util::StreamExt;
-use crate::components::{Button, Input};
-use crate::domains::chat::repo::{load_messages, save_message, clear_messages, create_conversation, update_conversation_title, get_all_conversations};
+use crate::domains::chat::repo::{load_messages, save_message, create_conversation, update_conversation_title, get_all_conversations};
 use tracing::{info, error};
 use std::sync::{Arc, Mutex};
 use rusqlite::Connection;
 
 pub enum ChatAction {
     SendMessage(String),
-    ClearChat,
+    Regenerate(String),
 }
 
 #[component]
@@ -22,7 +22,6 @@ pub fn ChatScreen() -> Element {
     let mut messages = use_signal(Vec::<Message>::new);
     let mut input_text = use_signal(String::new);
     let mut error_msg = use_signal(|| None::<String>);
-    let mut show_confirm = use_signal(|| false);
     let mut store = use_context::<Signal<ConversationStore>>();
     let conn = use_context::<Arc<Mutex<Connection>>>();
 
@@ -91,15 +90,53 @@ pub fn ChatScreen() -> Element {
                 );
 
                 match action {
-                    ChatAction::ClearChat => {
-                        let active_id = store.read().active_id.clone();
-                        if let Some(id) = active_id {
-                            info!("Clearing all messages for conversation...");
-                            if let Err(e) = clear_messages(conn.clone(), id).await {
-                                error!("Failed to clear messages: {}", e);
-                                error_msg.set(Some(format!("Database error: {}", e)));
-                            } else {
-                                messages.set(Vec::new());
+                    ChatAction::Regenerate(msg_id) => {
+                        error_msg.set(None);
+                        info!("Regenerating response for message: {}", msg_id);
+
+                        {
+                            let mut msgs = messages.write();
+                            msgs.retain(|m| m.id != msg_id);
+                        }
+
+                        let cid = store.read().active_id.clone().unwrap_or_default();
+                        let mut assistant_msg = Message::new(&cid, "assistant", "");
+                        let assistant_id = assistant_msg.id.clone();
+                        messages.push(assistant_msg.clone());
+
+                        let request = ChatRequest {
+                            model: llm_client.model.clone(),
+                            messages: messages.read().iter().map(|m| ChatMessage {
+                                role: m.role.clone(),
+                                content: m.content.clone(),
+                            }).collect(),
+                            stream: true,
+                        };
+
+                        match process_stream(&llm_client, request).await {
+                            Ok(mut stream) => {
+                                while let Some(chunk) = stream.next().await {
+                                    match chunk {
+                                        Ok(token) => {
+                                            let mut current_messages = messages.write();
+                                            if let Some(msg) = current_messages.iter_mut().find(|m| m.id == assistant_id) {
+                                                msg.content.push_str(&token);
+                                                assistant_msg.content.push_str(&token);
+                                            }
+                                        }
+                                        Err(e) => {
+                                            error!(e);
+                                            error_msg.set(Some(e));
+                                            break;
+                                        }
+                                    }
+                                }
+                                info!("Regeneration completed");
+                                let _ = save_message(conn.clone(), assistant_msg.clone()).await;
+                            }
+                            Err(e) => {
+                                error!("Regeneration stream error: {}", e);
+                                error_msg.set(Some(format!("Stream error: {}", e)));
                             }
                         }
                     }
@@ -199,99 +236,76 @@ pub fn ChatScreen() -> Element {
         }
     });
 
+    let input_chat = chat_service.clone();
+    let regen_chat = chat_service.clone();
+    let msg_count = messages.read().len();
+
     rsx! {
-        div { class: "flex h-screen bg-slate-50 text-slate-900 font-sans",
-            Sidebar {}
-            div { class: "flex-1 flex flex-col min-w-0",
-                // Header
-                header { class: "px-6 py-4 bg-white border-b border-slate-200 flex justify-between items-center shadow-sm z-10",
-                    div { class: "flex items-center gap-2",
-                        div { class: "w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold", "L" }
-                        h1 { class: "text-xl font-bold tracking-tight text-slate-800", "Lumina" }
-                    }
-                    span { class: "text-xs font-medium px-2 py-1 bg-slate-100 text-slate-500 rounded-full", "Phase 2" }
-                }
-
-                // Chat History
-                div { class: "flex-1 overflow-y-auto px-4 py-8 max-w-4xl mx-auto w-full space-y-2",
-                    for err in crate::domains::mcp::state::MCP_STATE.read().errors.iter() {
-                        div { class: "flex justify-center my-4",
-                            div { class: "bg-red-50 border border-red-200 text-red-600 px-6 py-3 rounded-2xl text-sm shadow-sm flex items-center gap-2",
-                                span { class: "font-bold", "⚠️" }
-                                "{err}"
-                            }
-                        }
-                    }
-
-                    for msg in messages.read().iter() {
-                        MessageBubble { message: msg.clone() }
-                    }
-
-                    if let Some(err) = error_msg.read().as_ref() {
-                        div { class: "flex justify-center my-4",
-                            div { class: "bg-red-50 border border-red-200 text-red-600 px-6 py-3 rounded-2xl text-sm shadow-sm flex items-center gap-2",
-                                span { class: "font-bold", "⚠️" }
-                                "{err}"
-                            }
-                        }
+        div { class: "flex-1 flex flex-col min-w-0 bg-surface text-on-surface",
+            header { class: "px-6 py-4 bg-surface-container border-b border-outline-variant/30 flex justify-between items-center z-10",
+                div { class: "flex items-center gap-3",
+                    div { class: "w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-on-primary text-sm font-bold", "T" }
+                    div { class: "flex flex-col",
+                        h1 { class: "text-sm font-headline font-bold tracking-tight text-on-surface", "Terra" }
+                        span { class: "text-[10px] text-secondary/60", "AI Assistant" }
                     }
                 }
-
-                // Input Area
-                footer { class: "p-6 bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]",
-                    div { class: "max-w-4xl mx-auto flex flex-col gap-3",
-                        // Confirmation Dialog
-                        if show_confirm() {
-                            div { class: "bg-red-50 p-4 rounded-xl border border-red-200 flex justify-between items-center mb-2 animate-in fade-in slide-in-from-bottom-2",
-                                span { class: "text-red-700 text-sm font-medium", "Permanently delete all messages?" }
-                                div { class: "flex gap-2",
-                                    Button {
-                                        class: "bg-red-600 hover:bg-red-700 !py-1 !px-4 text-xs",
-                                        onclick: move |_| {
-                                            chat_service.send(ChatAction::ClearChat);
-                                            show_confirm.set(false);
-                                        },
-                                        "Yes, Clear"
-                                    }
-                                    Button {
-                                        class: "bg-slate-200 !text-slate-700 hover:bg-slate-300 !py-1 !px-4 text-xs",
-                                        onclick: move |_| show_confirm.set(false),
-                                        "Cancel"
-                                    }
+            }
+            div { class: "flex-1 overflow-y-auto py-4",
+                if msg_count == 0 {
+                    div { class: "flex flex-col items-center justify-center h-full gap-6",
+                        div { class: "w-16 h-16 bg-primary-container/30 rounded-2xl flex items-center justify-center text-2xl", "🤖" }
+                        h2 { class: "text-lg font-medium text-on-surface", "How can I help you?" }
+                        p { class: "text-sm text-on-surface-variant max-w-md text-center",
+                            "Ask me anything — I can help with code, writing, research, and more."
+                        }
+                        PromptSuggestions {
+                            onselect: move |text: String| {
+                                input_chat.send(ChatAction::SendMessage(text));
+                            },
+                        }
+                    }
+                } else {
+                    div { class: "max-w-4xl mx-auto w-full space-y-1",
+                        for err in crate::domains::mcp::state::MCP_STATE.read().errors.iter() {
+                            div { class: "flex justify-center my-2",
+                                div { class: "bg-error-container border border-error-container text-error px-6 py-3 rounded-2xl text-sm shadow-sm flex items-center gap-2",
+                                    span { class: "font-bold", "⚠️" }
+                                    "{err}"
                                 }
                             }
                         }
-
-                        div { class: "flex gap-3",
-                            Button {
-                                class: "bg-slate-100 !text-slate-500 hover:bg-red-50 hover:!text-red-600 !px-3 shadow-none",
-                                onclick: move |_| show_confirm.toggle(),
-                                "🗑️"
-                            }
-                            Input {
-                                value: input_text.read().clone(),
-                                placeholder: "Ask Lumina anything...",
-                                oninput: move |evt: Event<FormData>| input_text.set(evt.value().clone()),
-                                onkeydown: move |evt: Event<KeyboardData>| {
-                                    if evt.key() == Key::Enter && !input_text.read().is_empty() {
-                                        chat_service.send(ChatAction::SendMessage(input_text.read().clone()));
-                                        input_text.set(String::new());
-                                    }
+                        {messages.read().iter().map(|msg| {
+                            let mid = msg.id.clone();
+                            let regen = regen_chat.clone();
+                            rsx! {
+                                MessageBubble {
+                                    key: "{mid}",
+                                    message: msg.clone(),
+                                    onregenerate: Some(EventHandler::new(move |id: String| {
+                                        regen.send(ChatAction::Regenerate(id));
+                                    })),
                                 }
                             }
-                            Button {
-                                onclick: move |_| {
-                                    if !input_text.read().is_empty() {
-                                        chat_service.send(ChatAction::SendMessage(input_text.read().clone()));
-                                        input_text.set(String::new());
-                                    }
-                                },
-                                "Send"
+                        })}
+                        if let Some(err) = error_msg.read().as_ref() {
+                            div { class: "flex justify-center my-2",
+                                div { class: "bg-error-container border border-error-container text-error px-6 py-3 rounded-2xl text-sm shadow-sm flex items-center gap-2",
+                                    span { class: "font-bold", "⚠️" }
+                                    "{err}"
+                                }
                             }
                         }
                     }
-                    p { class: "text-[10px] text-center text-slate-400 mt-3", "Lumina can make mistakes. Verify important information." }
                 }
+            }
+            InputArea {
+                value: input_text.read().clone(),
+                oninput: move |val| input_text.set(val),
+                onsubmit: move |text| {
+                    chat_service.send(ChatAction::SendMessage(text));
+                    input_text.set(String::new());
+                },
             }
         }
     }

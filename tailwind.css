@@ -1,11 +1,46 @@
 @import "tailwindcss";
 
+@source "./src/**/*.{rs,html,css}";
+
 @theme {
-  --color-primary: #3b82f6;
-  --font-sans: "Inter", ui-sans-serif, system-ui;
+    --color-surface: #101411;
+    --color-surface-dim: #101411;
+    --color-surface-bright: #363a36;
+    --color-surface-container: #1d211d;
+    --color-surface-container-low: #191d19;
+    --color-surface-container-lowest: #0b0f0c;
+    --color-surface-container-high: #272b27;
+    --color-surface-container-highest: #323632;
+    --color-surface-variant: #323632;
+    --color-on-surface: #e0e3de;
+    --color-on-surface-variant: #c1c9bf;
+    --color-primary: #9dd3aa;
+    --color-primary-container: #4a7c59;
+    --color-on-primary: #01391c;
+    --color-on-primary-container: #e1ffe5;
+    --color-secondary: #d0c5b8;
+    --color-secondary-container: #4f483e;
+    --color-on-secondary: #362f26;
+    --color-on-secondary-container: #c1b7aa;
+    --color-tertiary: #e2c284;
+    --color-tertiary-container: #886e38;
+    --color-on-tertiary: #402d00;
+    --color-on-tertiary-container: #fff6ed;
+    --color-error: #ffb4ab;
+    --color-error-container: #93000a;
+    --color-on-error: #690005;
+    --color-on-error-container: #ffdad6;
+    --color-outline: #8b938a;
+    --color-outline-variant: #414942;
+    --color-inverse-primary: #376847;
+    --color-inverse-surface: #e0e3de;
+    --color-inverse-on-surface: #2d312e;
+
+    --font-sans: "Inter", ui-sans-serif, system-ui;
+    --font-body: "Nunito Sans", ui-sans-serif, system-ui;
+    --font-headline: "Plus Jakarta Sans", ui-sans-serif, system-ui;
 }
 
-/* Custom styles for the markdown renderer if needed beyond utility classes */
 .markdown-code-block {
-    @apply bg-slate-800 rounded-md p-3 my-2 font-mono text-sm overflow-x-auto border border-slate-700;
+    @apply bg-surface-container rounded-md p-3 my-2 font-mono text-sm overflow-x-auto border border-outline-variant/30;
 }

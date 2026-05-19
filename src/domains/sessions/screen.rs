@@ -8,6 +8,7 @@ use rusqlite::Connection;
 #[allow(non_snake_case)]
 pub fn SessionsPage() -> Element {
     let store = use_signal(SessionStore::new);
+    provide_context(store.clone());
     let conn = use_context::<Arc<Mutex<Connection>>>();
 
     {
